@@ -1,0 +1,3 @@
+234;diesel;5;6;Mitre
+6789;eléctrico;10;1;Roca
+893;gasolina;0;11;no-asignado

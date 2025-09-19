@@ -6,12 +6,12 @@ package PropiasTP;
 
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 public class Estacion implements Comparable {
     private String nombre;
     private String calle;
-    private int numero;
+    private int numero; //clave
     private String ciudad;
     private int codPostal;
     private int cantVias;

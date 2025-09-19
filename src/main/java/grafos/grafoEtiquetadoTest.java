@@ -43,11 +43,11 @@ public class grafoEtiquetadoTest {
         System.out.println("Camino con menos Peso entre A y C: " + G1.caminoConMenosPeso('A', 'C').toString());
         System.out.println("Caminos entre A y C: "+G1.caminos('A', 'C').toString());
         System.out.println(" X Caminos entre A y F que NO contiene a E: "+G1.listaConCaminosQueNoTieneC('A', 'F', 'E'));
-        System.out.println("Camino mas corto entre A y E que contiene a D:" + G1.menorCaminoQueTiene('A', 'E', 'D').toString());
-        System.out.println("Camino mas rapido entre A y B que contiene a D:" + G1.caminoMasRapidoQuePasa('A', 'B', 'D').toString());
+        System.out.println("Camino mas corto entre A y E que contiene a D:" + G1.menorCaminoQueTieneC('A', 'E', 'D').toString());
+        System.out.println("Camino mas rapido entre A y B que contiene a D:" + G1.caminoMasRapidoQuePasaPorC('A', 'B', 'D').toString());
         System.out.println("Camino mas corto entre A y C que contiene a 3 vetices:" + G1.caminoConTopeDeVertices('A', 'C', 3).toString());
         System.out.println("Camino mas corto entre A y D que contiene a 4 vetices:" + G1.caminoConTopeDeVertices('A', 'D', 4).toString());
-        System.out.println("Listar en profundidad: " + G1.listarProfundidad().toString());
+        System.out.println("Listar en profundidad: " + G1.listarEnProfundidad().toString());
         System.out.println("Listar en anchura: " + G1.listarAnchura().toString());
         System.out.println("clone: " + G1.clone().toString());
         System.out.println("Lista de caminos entre A y E: " + G1.caminos('A', 'E').toString());

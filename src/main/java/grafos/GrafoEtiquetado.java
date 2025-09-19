@@ -7,6 +7,8 @@ package grafos;
 import lineales.dinamicas.Cola;
 import lineales.dinamicas.Lista;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class GrafoEtiquetado {
 
@@ -57,9 +59,11 @@ public class GrafoEtiquetado {
     }
 
     private HashMap<Object, NodoVerticeEtiquetado> ubicarVertices(Object elemA, Object elemB) {
+        //retorna un hash con los nodos que coincidan con los elementosque recive por parametro
         boolean corte = false;
         HashMap<Object, NodoVerticeEtiquetado> retorno = new HashMap<>();
         NodoVerticeEtiquetado aux = this.inicio; //puntero auxiliar
+
         while (aux != null && !corte) {
             if (aux.getElemento().equals(elemA)) {
                 NodoVerticeEtiquetado verticeA = aux;
@@ -75,27 +79,21 @@ public class GrafoEtiquetado {
             aux = aux.getSigVertice();
         }
         return retorno;
-    }
+    }//check
 
-    /**
-     * eliminamos un vertice(Nodo)del grafo
-     *
-     * @param elemento
-     * @return true si se elimino, false caso contrario
-     */
     public boolean eliminarVertice(Object elemento) {
         boolean retorno = false;
         NodoVerticeEtiquetado nodo = this.inicio;
         if (nodo.getElemento().equals(elemento)) {
-            retorno = this.eliminarDeAdyacentes(nodo, nodo);
-            this.inicio = nodo.getSigVertice();
+            retorno = this.eliminarDeAdyacentes(nodo, nodo); //elimina los adyacentes que apunten a  dicho nodo a eliminar
+            this.inicio = nodo.getSigVertice(); //elimina el nodo, va a trash
         } else {
             NodoVerticeEtiquetado sigVertice = nodo.getSigVertice();
-            while (sigVertice != null && !sigVertice.getElemento().equals(elemento)) {
+            while (sigVertice != null && !sigVertice.getElemento().equals(elemento)) { //si el nodo a eleiminar no es el primero, recorre los nodos verties
                 sigVertice = sigVertice.getSigVertice();
                 nodo = nodo.getSigVertice();
             }
-            if (sigVertice != null) {
+            if (sigVertice != null) {// si encontro el nodo vertice a eliminar, procede a quitar sus adyacentes
                 retorno = this.eliminarDeAdyacentes(sigVertice, sigVertice);
                 nodo.setSigVertice(sigVertice.getSigVertice()); //elimina el nodo, va a trash
             }
@@ -181,30 +179,41 @@ public class GrafoEtiquetado {
     }//check
 
     public boolean setEtiquetaArco(Object elemA, Object elemB, double etiquetaNueva) {
+        //actualiza la etiqueta de un arco entre 2 nodos del grafo
         boolean res = false;
         HashMap<Object, NodoVerticeEtiquetado> vertices = this.ubicarVertices(elemA, elemB);
         NodoVerticeEtiquetado verticeA = vertices.get(elemA);
         NodoVerticeEtiquetado verticeB = vertices.get(elemB);
+        System.out.println("existen nodos");
         if (verticeA != null && verticeB != null) {
             res = this.setEtiquetaAdyacenteAux(verticeA, verticeB, etiquetaNueva);
         }
         return res;
-    }
+    }//check
 
-    private boolean setEtiquetaAdyacenteAux(NodoVerticeEtiquetado nodo, NodoVerticeEtiquetado adyacente, double etiquetaNueva) {
-        boolean retorno = false;
-        NodoAdyacenteEtiquetado aux = nodo.getAdyacente();
-        boolean control = true;
-        while (aux != null && control) {
-            if (aux.getVertice().equals(adyacente)) {
+    private boolean setEtiquetaAdyacenteAux(NodoVerticeEtiquetado nodoA, NodoVerticeEtiquetado nodoB, double etiquetaNueva) {
+        boolean res = false;
+        NodoAdyacenteEtiquetado aux = nodoA.getAdyacente();
+        while (aux != null && !res) {
+            if (aux.getVertice().equals(nodoB)) {
                 aux.setEtiqueta(etiquetaNueva);
-                control = false;
-                retorno = true;
+                res = true;
             }
             aux = aux.getSiguienteAdy();
         }
-        return retorno;
-    }
+        if(res){
+            res = false;
+            aux=nodoB.getAdyacente();
+            while (aux != null && !res) {
+            if (aux.getVertice().equals(nodoA)) {
+                aux.setEtiqueta(etiquetaNueva);
+                res = true;
+            }
+            aux = aux.getSiguienteAdy();
+        }
+        }
+        return res;
+    }//check
 
     public boolean existeVertice(Object elem) {
         boolean res = false;
@@ -216,18 +225,18 @@ public class GrafoEtiquetado {
             aux = aux.getSigVertice();
         }
         return res;
-    }
+    }//check
 
     public Object recuperarVertice(Object elem) {
-        Object retorno = null;
+        Object res = null;
         NodoVerticeEtiquetado aux = this.inicio;
-        while (aux != null && retorno == null) {
+        while (aux != null && res == null) {
             if (aux.getElemento().equals(elem)) {
-                retorno = aux.getElemento();
+                res = aux.getElemento();
             }
             aux = aux.getSigVertice();
         }
-        return retorno;
+        return res;
     }//check
 
     public boolean existeArco(Object elemA, Object elemB) {
@@ -244,8 +253,9 @@ public class GrafoEtiquetado {
                 aux = aux.getSiguienteAdy();
             }
         }
+
         return res;
-    }
+    }//check
 
     public boolean existeCamino(Object elemA, Object elemB) {
         boolean res = false;
@@ -255,8 +265,9 @@ public class GrafoEtiquetado {
         if (verticeA != null && verticeB != null) {
             res = existeCaminoAux(verticeA, verticeB, new Lista());
         }
+
         return res;
-    }
+    }//check
 
     private boolean existeCaminoAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, Lista visitados) {
         boolean res = false;
@@ -287,7 +298,7 @@ public class GrafoEtiquetado {
             camino = this.caminoMasCortoAux(verticeA, verticeB, visitados, camino, new Lista()); // modulo recursivo
         }
         return camino;
-    }
+    }//check
 
     private Lista caminoMasCortoAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, HashMap<String, Object> nodosVisitados, Lista camino, Lista comparar) {
         if (inicio != null) {
@@ -299,7 +310,7 @@ public class GrafoEtiquetado {
                 } else {// si no llego a destino
                     NodoAdyacenteEtiquetado nodoAdyAux = inicio.getAdyacente(); // puntero a los ady del nodo actual
                     while (nodoAdyAux != null) {
-                        if (nodosVisitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// se pregunta en el hash si se paso por el nodoAdy 
+                        if (nodosVisitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// se pregunta en el hash si se paso por el nodoAdy
                             comparar = this.caminoMasCortoAux(nodoAdyAux.getVertice(), destino, nodosVisitados, camino, comparar); // recursividad
                         }
                         nodoAdyAux = nodoAdyAux.getSiguienteAdy();
@@ -322,7 +333,7 @@ public class GrafoEtiquetado {
             camino = this.caminoMasLargoAux(verticeA, verticeB, visitados, camino, new Lista());
         }
         return camino;
-    }
+    }//check
 
     private Lista caminoMasLargoAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, HashMap<String, Object> visitados, Lista camino, Lista comparar) {
         if (inicio != null) {
@@ -359,8 +370,9 @@ public class GrafoEtiquetado {
         if (verticeA != null && verticeB != null) {
             arreglo = this.caminoConMasPesoAux(verticeA, verticeB, visitados, new Lista(), 0, 0, arreglo);
         }
+
         return ((Lista) arreglo[0]);
-    }
+    }//check
 
     private Object[] caminoConMasPesoAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, HashMap<String, NodoVerticeEtiquetado> visitados, Lista camino, double peso, double comparar, Object[] arreglo) {
         if (inicio != null) {
@@ -401,8 +413,9 @@ public class GrafoEtiquetado {
         if (verticeA != null && verticeB != null) {
             arreglo = this.caminoConMenosPesoAux(verticeA, verticeB, visitados, new Lista(), 0, arreglo);
         }
+
         return ((Lista) arreglo[0]);
-    }
+    }//check
 
     private Object[] caminoConMenosPesoAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino,
             HashMap<String, NodoVerticeEtiquetado> visitados, Lista camino, double peso, Object[] arreglo) {
@@ -436,18 +449,25 @@ public class GrafoEtiquetado {
     }//check
 
     public Lista caminos(Object elemA, Object elemB) {
-        Lista camino = new Lista();
+        /**
+         * Lista todos los caminos de A a B, sin importar la cantidad de nodos
+         */
+        Lista caminos = new Lista();
         HashMap<String, Object> visitados = new HashMap<>();
         HashMap<Object, NodoVerticeEtiquetado> vertices = this.ubicarVertices(elemA, elemB);
         NodoVerticeEtiquetado verticeA = vertices.get(elemA);
         NodoVerticeEtiquetado verticeB = vertices.get(elemB);
         if (verticeA != null && verticeB != null) {
-            camino = this.caminosAux(verticeA, verticeB, visitados);
+            caminos = this.caminosAux(verticeA, verticeB, visitados);
         }
-        return camino;
+        return caminos;//check
     }
 
     private Lista caminosAux(NodoVerticeEtiquetado nodo, NodoVerticeEtiquetado destino, HashMap<String, Object> visitados) {
+        /**
+         *  Lista todos los caminos del nodo A al nodo B, por cada recorrido de A a B se va almacenado en un HashMap,
+         *  cuando ese recorrido esta estacompleto lo guarda en la lista de caminos.
+         */
         Lista retorno = new Lista();
         if (nodo != null) {
             visitados.put(nodo.getElemento().toString(), nodo);
@@ -475,7 +495,7 @@ public class GrafoEtiquetado {
             }
             visitados.remove(nodo.getElemento().toString());
         }
-        return retorno;
+        return retorno;//check
     }
 
     private Lista concatenar(Lista l1, Lista l2) {
@@ -493,9 +513,9 @@ public class GrafoEtiquetado {
         return retorno;
     }
 
-    public Lista menorCaminoQueTiene(Object elemA, Object elemB, Object elemC) {
+    public Lista menorCaminoQueTieneC(Object elemA, Object elemB, Object elemC) {
         /**
-         * lista el camino de A a C que pasa por B, con respecto a la menor
+         * lista el camino de A a B que pasa por C, con respecto a la menor
          * cantidad de nodos recorridos, No por etiqueta
          */
         Lista listaCamino = new Lista();
@@ -505,8 +525,7 @@ public class GrafoEtiquetado {
         NodoVerticeEtiquetado verticeB = null;
         NodoVerticeEtiquetado verticeC = null;
         boolean corte = false;
-
-        while (aux != null && !corte) {
+        while (aux != null && !corte) { // recorre los nodos para obtener los nodos A, B y C
             if (aux.getElemento().equals(elemA)) {
                 verticeA = aux;
             } else if (aux.getElemento().equals(elemB)) {
@@ -517,26 +536,27 @@ public class GrafoEtiquetado {
             corte = verticeA != null && verticeB != null && verticeC != null;
             aux = aux.getSigVertice();
         }
-        if (verticeA != null && verticeB != null && verticeC != null) {
-            listaCamino = this.menorCaminoQueTieneAux(verticeA, verticeB, verticeC, NodosVisitados, new Lista(), listaCamino);
+        if (verticeA != null && verticeB != null && verticeC != null) { // si los tres nodos existen, se llama al metodo recursivo
+            listaCamino = this.menorCaminoQueTieneC(verticeA, verticeB, verticeC, NodosVisitados, new Lista(), listaCamino);
         }
         return listaCamino;
-    }
+    }//check
 
-    private Lista menorCaminoQueTieneAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, NodoVerticeEtiquetado nodoC, HashMap<String, NodoVerticeEtiquetado> nodosVisitados, Lista camino, Lista comparar) {
+    private Lista menorCaminoQueTieneC(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, NodoVerticeEtiquetado intermedio, HashMap<String, NodoVerticeEtiquetado> nodosVisitados, Lista camino, Lista comparar) {
         if (inicio != null) {
-            nodosVisitados.put(inicio.getElemento().toString(), inicio);// coloca nodo en hash
+            nodosVisitados.put(inicio.getElemento().toString(), inicio);// coloca nodo en hash para evitar pasar por el mismo nodo
             camino.insertar(inicio.getElemento(), camino.longitud() + 1);// inseta nodo en lista camino
-            if (comparar.esVacia() || camino.longitud() < comparar.longitud()) {// si listaCaminosPosibles es vacia o si camino es menor a listaCaminosPosibles
+            if (comparar.esVacia() || camino.longitud() < comparar.longitud()) {// compara en caso de que comparar es vacia (por elprimer recorrido) o si camino(lista sobrre la que se trabaja) es menor a comparar,
                 if (inicio.equals(destino)) {// si llego a destino
-                    if (camino.localizar(nodoC.getElemento()) != -1) {
+                    if (camino.localizar(intermedio.getElemento()) != -1) {
+
                         comparar = camino.clone();
                     }
                 } else {// si no llego a destino
                     NodoAdyacenteEtiquetado nodoAdyAux = inicio.getAdyacente(); // puntero a los ady del nodo actual
                     while (nodoAdyAux != null) {
-                        if (nodosVisitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// se pregunta en el hash si se paso por el nodoAdy 
-                            comparar = this.menorCaminoQueTieneAux(nodoAdyAux.getVertice(), destino, nodoC, nodosVisitados, camino, comparar); // recursividad
+                        if (nodosVisitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// se pregunta en el hash si se paso por el nodoAdy, en caso que no, entra en la recursividad
+                            comparar = this.menorCaminoQueTieneC(nodoAdyAux.getVertice(), destino, intermedio, nodosVisitados, camino, comparar); // recursividad
                         }
                         nodoAdyAux = nodoAdyAux.getSiguienteAdy();
                     }
@@ -571,29 +591,29 @@ public class GrafoEtiquetado {
             corte = verticeA != null && verticeB != null && verticeC != null;
             aux = aux.getSigVertice();
         }
-        if (verticeA != null && verticeB != null && verticeC != null) {
-            listaCaminosPosibles = listaConCaminosQueNoTieneAux(verticeA, verticeB, verticeC, NodosVisitados, new Lista(), listaCaminosPosibles);
+        if (verticeA != null && verticeB != null && verticeC != null) { //si localiza los tres nodos, llama al metodo recursivo, casocontrario devuelve nulo.
+            listaCaminosPosibles = listaConCaminosQueNoTieneC(verticeA, verticeB, verticeC, NodosVisitados, new Lista(), listaCaminosPosibles);
         }
         return listaCaminosPosibles;
-    }
+    }//check
 
-    private Lista listaConCaminosQueNoTieneAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino,
+    private Lista listaConCaminosQueNoTieneC(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino,
             NodoVerticeEtiquetado nodoC, HashMap<String, NodoVerticeEtiquetado> nodosVisitados, Lista camino,
             Lista listaCaminosPosibles) {
         if (inicio != null) {
             nodosVisitados.put(inicio.getElemento().toString(), inicio);// coloca nodo en hash
             camino.insertar(inicio.getElemento(), camino.longitud() + 1);// inseta nodo en lista camino
             if (inicio.equals(destino)) {// si llego a destino
-                if (camino.localizar(nodoC.getElemento()) == -1) {
-                    if (listaCaminosPosibles.existeObjeto(camino)==false) {
+                if (camino.localizar(nodoC.getElemento()) == -1 && listaCaminosPosibles.existeObjeto(camino)==false) {
+                    //if (listaCaminosPosibles.existeObjeto(camino)==false) {
                         listaCaminosPosibles.insertar((Lista) camino.clone(), listaCaminosPosibles.longitud() + 1);
-                    }
+                    //}
                 }
             } else {// si no llego a destino
                 NodoAdyacenteEtiquetado nodoAdyAux = inicio.getAdyacente(); // puntero a los ady del nodo actual
                 while (nodoAdyAux != null) {
-                    if (nodosVisitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// se pregunta en el hash si se paso por el nodoAdy 
-                        listaCaminosPosibles = listaConCaminosQueNoTieneAux(nodoAdyAux.getVertice(), destino, nodoC, nodosVisitados, camino, listaCaminosPosibles); // recursividad
+                    if (nodosVisitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// se pregunta en el hash si se paso por el nodoAdy
+                        listaCaminosPosibles = listaConCaminosQueNoTieneC(nodoAdyAux.getVertice(), destino, nodoC, nodosVisitados, camino, listaCaminosPosibles); // recursividad
                     }
                     nodoAdyAux = nodoAdyAux.getSiguienteAdy();
                 }
@@ -604,7 +624,7 @@ public class GrafoEtiquetado {
         return listaCaminosPosibles;
     } //check
 
-    public Lista caminoMasRapidoQuePasa(Object elemA, Object elemB, Object elemC) {
+    public Lista caminoMasRapidoQuePasaPorC(Object elemA, Object elemB, Object elemC) {
         HashMap<String, NodoVerticeEtiquetado> visitados = new HashMap<>();
         Object[] arreglo = new Object[2];
         arreglo[0] = new Lista();
@@ -626,13 +646,13 @@ public class GrafoEtiquetado {
             aux = aux.getSigVertice();
         }
         if (verticeA != null && verticeB != null && verticeC != null) {
-            arreglo = this.caminoMasRapidoQuePasaAux(verticeA, verticeB, verticeC, visitados, new Lista(), 0.0, arreglo);
+            arreglo = this.caminoMasRapidoQuePasaPorC(verticeA, verticeB, verticeC, visitados, new Lista(), 0.0, arreglo);
         }
         System.out.println("km: " + ((double) arreglo[1]));
         return ((Lista) arreglo[0]);
     }
 
-    private Object[] caminoMasRapidoQuePasaAux(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, NodoVerticeEtiquetado nodoC,
+    private Object[] caminoMasRapidoQuePasaPorC(NodoVerticeEtiquetado inicio, NodoVerticeEtiquetado destino, NodoVerticeEtiquetado nodoC,
             HashMap<String, NodoVerticeEtiquetado> visitados, Lista camino, double peso, Object[] arreglo) {
         if (inicio != null) {
             visitados.put(inicio.getElemento().toString(), inicio);
@@ -651,7 +671,7 @@ public class GrafoEtiquetado {
                     peso += nodoAdyAux.getEtiqueta();
                     if (visitados.get(nodoAdyAux.getVertice().getElemento().toString()) == null) {// si aun no paso por el nodo
                         if (((peso <= (Double) arreglo[1]) || ((Double) arreglo[1] == 0.0))) {
-                            arreglo = this.caminoMasRapidoQuePasaAux(nodoAdyAux.getVertice(), destino, nodoC, visitados, camino, peso, arreglo);
+                            arreglo = this.caminoMasRapidoQuePasaPorC(nodoAdyAux.getVertice(), destino, nodoC, visitados, camino, peso, arreglo);
                         }
                     }
                     peso -= nodoAdyAux.getEtiqueta();
@@ -664,11 +684,13 @@ public class GrafoEtiquetado {
         return arreglo;
     }//check
 
-    //preguntar concepto del metodo
+    //preguntar concepto del metodo solicitado para ver si esta bien implementado
     public Lista caminoConTopeDeVertices(Object elemA, Object elemB, int cantidadVertices) {
         Lista comparar = new Lista();
         HashMap<String, NodoVerticeEtiquetado> visitados = new HashMap<>();
         HashMap<Object, NodoVerticeEtiquetado> vertices = this.ubicarVertices(elemA, elemB);
+        //NodoVerticeEtiquetado verticeA = (NodoVerticeEtiquetado) recuperarVertice(elemA);
+        //NodoVerticeEtiquetado verticeB = (NodoVerticeEtiquetado) recuperarVertice(elemB);
         NodoVerticeEtiquetado verticeA = vertices.get(elemA);
         NodoVerticeEtiquetado verticeB = vertices.get(elemB);
         if (verticeA != null && verticeB != null) {
@@ -702,51 +724,52 @@ public class GrafoEtiquetado {
         return comparar;
     }
 
-    public Lista listarProfundidad() {
+    public Lista listarEnProfundidad() {
         Lista list = new Lista();
         HashMap<String, NodoVerticeEtiquetado> nodosVisitados = new HashMap<>();
         NodoVerticeEtiquetado nodo = this.inicio;
         while (nodo != null) {
             if (nodosVisitados.get(nodo.getElemento().toString()) == null) {
-                this.listarProdundidadAux(nodo, list, nodosVisitados);
+                this.listarEnProdundidadAux(nodo, list, nodosVisitados);
             }
             nodo = nodo.getSigVertice();
         }
         return list;
     }
 
-    private void listarProdundidadAux(NodoVerticeEtiquetado nodo, Lista listados, HashMap<String, NodoVerticeEtiquetado> visitados) {
-        visitados.put(nodo.getElemento().toString(), inicio);
-        listados.insertar(nodo.getElemento(), listados.longitud() + 1);
+    private void listarEnProdundidadAux(NodoVerticeEtiquetado nodo, Lista listaRes, HashMap<String, NodoVerticeEtiquetado> visitados) {
+        visitados.put(nodo.getElemento().toString(), inicio); //guarda el nodo en el hash para indicar que fue visitado
+        listaRes.insertar(nodo.getElemento(), listaRes.longitud() + 1);
         NodoAdyacenteEtiquetado aux = nodo.getAdyacente();
         while (aux != null) {
             if (visitados.get(aux.getVertice().getElemento().toString()) == null) {
-                this.listarProdundidadAux(aux.getVertice(), listados, visitados);
+                this.listarEnProdundidadAux(aux.getVertice(), listaRes, visitados);
             }
             aux = aux.getSiguienteAdy();
         }
-    }
+    }//check
 
     public Lista listarAnchura() {
-        Lista listados = new Lista();
+        Lista listaRes = new Lista();
         HashMap<String, Object> visitados = new HashMap<>();
         NodoVerticeEtiquetado nodo = this.inicio;
         while (nodo != null) {
             if (visitados.get(nodo.getElemento().toString()) == null) {
-                this.listarAnchuraAux(nodo, listados, visitados);
+                this.listarAnchuraAux(nodo, listaRes, visitados);
             }
             nodo = nodo.getSigVertice();
         }
-        return listados;
+        return listaRes;
     }
 
-    private void listarAnchuraAux(NodoVerticeEtiquetado nodo, Lista listados, HashMap<String, Object> visitados) {
+    private void listarAnchuraAux(NodoVerticeEtiquetado nodo, Lista listaRes, HashMap<String, Object> visitados) {
         Cola q = new Cola();
         visitados.put(nodo.getElemento().toString(), inicio);
         q.poner(nodo);
         while (!q.esVacia()) {
             NodoVerticeEtiquetado aux = (NodoVerticeEtiquetado) q.obtenerFrente();
-            listados.insertar(aux.getElemento(), listados.longitud() + 1);
+            listaRes.insertar(aux.getElemento(), listaRes.longitud() + 1);
+            System.out.println(listaRes.toString());
             q.sacar();
             NodoAdyacenteEtiquetado adyacente = aux.getAdyacente();
             while (adyacente != null) {
@@ -757,7 +780,7 @@ public class GrafoEtiquetado {
                 adyacente = adyacente.getSiguienteAdy();
             }
         }
-    }
+    }//creo que esta bien
 
     public GrafoEtiquetado clone() {
         GrafoEtiquetado clon = new GrafoEtiquetado();
@@ -801,7 +824,6 @@ public class GrafoEtiquetado {
 
     @Override
     public String toString() {
-        System.out.println("entro al metodo");
         String retorno = "Grafo Vacio";
         NodoVerticeEtiquetado nodo = this.inicio;
         if (nodo != null) {
@@ -819,6 +841,54 @@ public class GrafoEtiquetado {
             }
         }
         return retorno;
+    }//check
+
+
+    public Object[] caminoConTopeDeKm(Object elemA, Object elemB, double n) {
+        Lista comparar = new Lista();
+        Object[] arreglo = new Object[2];
+        double m=0;
+        HashMap<String, NodoVerticeEtiquetado> visitados = new HashMap<>();
+        HashMap<Object, NodoVerticeEtiquetado> vertices = this.ubicarVertices(elemA, elemB);
+        NodoVerticeEtiquetado verticeA = vertices.get(elemA);
+        NodoVerticeEtiquetado verticeB = vertices.get(elemB);
+
+        if (verticeA != null && verticeB != null) {
+            
+            arreglo = this.caminoConTopeDeKm(verticeA, verticeB, n, m, visitados, new Lista(), comparar, arreglo);
+        }
+        return arreglo;
+    }
+
+    private Object[] caminoConTopeDeKm(NodoVerticeEtiquetado nodoActual, NodoVerticeEtiquetado destino, double n, double contadorKm,
+            HashMap<String, NodoVerticeEtiquetado> visitados, Lista recorridoActual, Lista caminoRes, Object[] arreglo) {
+        if (nodoActual != null) {
+            System.out.println(nodoActual.getElemento().toString());
+            visitados.put(nodoActual.getElemento().toString(), nodoActual);
+            recorridoActual.insertar(nodoActual.getElemento(), recorridoActual.longitud() + 1);
+            if (contadorKm <= n || caminoRes.esVacia()) {
+                if (nodoActual.equals(destino)) {
+                    arreglo[0]=recorridoActual;
+                    arreglo[1]=contadorKm;
+                } else {
+                    NodoAdyacenteEtiquetado adyacente = nodoActual.getAdyacente();
+                    while (adyacente != null) {
+
+                        contadorKm+= adyacente.getEtiqueta();
+                        if (visitados.get(adyacente.getVertice().getElemento().toString()) == null) {
+                            arreglo = this.caminoConTopeDeKm(adyacente.getVertice(), destino, n, contadorKm,
+                                    visitados, recorridoActual, caminoRes, arreglo);
+                        }
+                        contadorKm-= adyacente.getEtiqueta();                  
+                        adyacente = adyacente.getSiguienteAdy();
+                    }
+                } 
+            }
+            visitados.remove(nodoActual.getElemento().toString());
+            recorridoActual.eliminar(recorridoActual.localizar(nodoActual.getElemento()));         
+        }
+        System.out.println(recorridoActual.toString());
+        return arreglo;
     }
 
 }

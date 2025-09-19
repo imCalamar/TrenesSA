@@ -1,22 +1,19 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
+
 package PropiasTP;
 
 import lineales.dinamicas.Lista;
 
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 public class Linea {
     private String nombre;
-    private Lista listaLineas;
+    private Lista listaDeEstaciones;
 
-    public Linea(String nombre, Lista listaLineas) {
+    public Linea(String nombre, Lista listaDeEstaciones) {
         this.nombre=nombre;
-        this.listaLineas=listaLineas;
+        this.listaDeEstaciones=listaDeEstaciones;
     }
 
     public String getNombre() {
@@ -27,17 +24,17 @@ public class Linea {
         this.nombre = nombre;
     }
 
-    public Lista getListaLineas() {
-        return listaLineas;
+    public Lista getListaDeEstaciones() {
+        return listaDeEstaciones;
     }
 
-    public void setListaLineas(Lista listaLineas) {
-        this.listaLineas = listaLineas;
+    public void setListaDeEstaciones(Lista listaDeEstaciones) {
+        this.listaDeEstaciones = listaDeEstaciones;
     }
 
     @Override
     public String toString() {
-        return "Linea{" + "nombre=" + nombre + ", listaLineas=" + listaLineas.toString() + '}';
+        return "Linea{" + "nombre=" + nombre + ", lista de estaciones=" + listaDeEstaciones.toString() + '}';
     }
 
 

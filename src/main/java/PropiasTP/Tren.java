@@ -1,25 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package PropiasTP;
 
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 public class Tren implements Comparable{
     
     private int codigo;
     private String tipoPropulsion;
-    private int cantVagonesPasageros;
+    private int cantVagonesPasajeros;
     private int cantVagonesCarga;
     private String lineaAsignada;
     
     public Tren(int codigo,String tipoPropulsion,int cantVagonesPasageros,int cantVagonesCarga,String lineaAsignada){
         this.codigo= codigo;
         this.tipoPropulsion=tipoPropulsion;
-        this.cantVagonesPasageros =cantVagonesPasageros;
+        this.cantVagonesPasajeros =cantVagonesPasageros;
         this.cantVagonesCarga = cantVagonesCarga;
         this.lineaAsignada = lineaAsignada;       
     }
@@ -40,12 +36,12 @@ public class Tren implements Comparable{
         this.tipoPropulsion = tipoPropulsion;
     }
 
-    public int getCantVagonesPasageros() {
-        return cantVagonesPasageros;
+    public int getCantVagonesPasajeros() {
+        return cantVagonesPasajeros;
     }
 
-    public void setCantVagonesPasageros(int cantVagonesPasageros) {
-        this.cantVagonesPasageros = cantVagonesPasageros;
+    public void setCantVagonesPasajeros(int cantVagonesPasageros) {
+        this.cantVagonesPasajeros = cantVagonesPasageros;
     }
 
     public int getCantVagonesCarga() {
@@ -94,7 +90,7 @@ public class Tren implements Comparable{
 
     @Override
     public String toString() {
-        return "Tren{" + "codigo=" + codigo + ", tipoPropulsion=" + tipoPropulsion + ", cantVagonesPasageros=" + cantVagonesPasageros + ", cantVagonesCarga=" + cantVagonesCarga + ", lineaAsignada=" + lineaAsignada + '}';
+        return "Tren{" + "codigo=" + codigo + ", tipoPropulsion=" + tipoPropulsion + ", cantVagonesPasageros=" + cantVagonesPasajeros + ", cantVagonesCarga=" + cantVagonesCarga + ", lineaAsignada=" + lineaAsignada + '}';
     }
     
     

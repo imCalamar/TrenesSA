@@ -50,8 +50,10 @@ public class testGrafo {
         //Lista b = prueba.listarProfundidad();
         //Lista n = prueba.concatenar(a, b);
 
-        System.err.println(prueba.caminoConTopeDeKm("A", "G", 8000));
         
+        boolean res = prueba.caminoConTopeDeKm("A", "G", 8000);
+
+        System.out.println(res);
     }
 
 }

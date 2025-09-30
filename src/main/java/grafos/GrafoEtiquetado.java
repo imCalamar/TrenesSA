@@ -844,8 +844,8 @@ public class GrafoEtiquetado {
     }//check
 
 
-    public Object[] caminoConTopeDeKm(Object elemA, Object elemB, double n) {
-        Lista comparar = new Lista();
+    public boolean caminoConTopeDeKm(Object elemA, Object elemB, double n) {
+        boolean res=true;;
         Object[] arreglo = new Object[2];
         double m=0;
         HashMap<String, NodoVerticeEtiquetado> visitados = new HashMap<>();
@@ -853,42 +853,47 @@ public class GrafoEtiquetado {
         NodoVerticeEtiquetado verticeA = vertices.get(elemA);
         NodoVerticeEtiquetado verticeB = vertices.get(elemB);
 
-        if (verticeA != null && verticeB != null) {
-            
-            arreglo = this.caminoConTopeDeKm(verticeA, verticeB, n, m, visitados, new Lista(), comparar, arreglo);
+        if (verticeA != null && verticeB != null) { 
+            arreglo = this.caminoConTopeDeKm(verticeA, verticeB, n, m, visitados, new Lista(), arreglo);
         }
-        return arreglo;
+        if(arreglo[0]==null){
+            res=false;
+        }
+        return res;
     }
 
     private Object[] caminoConTopeDeKm(NodoVerticeEtiquetado nodoActual, NodoVerticeEtiquetado destino, double n, double contadorKm,
-            HashMap<String, NodoVerticeEtiquetado> visitados, Lista recorridoActual, Lista caminoRes, Object[] arreglo) {
+            HashMap<String, NodoVerticeEtiquetado> visitados, Lista recorridoActual, Object[] arreglo) {
         if (nodoActual != null) {
-            System.out.println(nodoActual.getElemento().toString());
             visitados.put(nodoActual.getElemento().toString(), nodoActual);
             recorridoActual.insertar(nodoActual.getElemento(), recorridoActual.longitud() + 1);
-            if (contadorKm <= n || caminoRes.esVacia()) {
-                if (nodoActual.equals(destino)) {
-                    arreglo[0]=recorridoActual;
-                    arreglo[1]=contadorKm;
-                } else {
+            if (contadorKm <= n) {
+                if (nodoActual.equals(destino)){
+                    if(arreglo[1]==null){//para la primera vez que requiere guardar
+                        arreglo[0]=recorridoActual.clone();
+                        arreglo[1]=contadorKm;
+                    }else{
+                        if(contadorKm <= ((double)arreglo[1])){//compara para guardar el camino mas corto
+                            arreglo[0]=recorridoActual.clone();
+                            arreglo[1]=contadorKm;
+                        }
+                    }
+                } else {//sino llega al destino sigue recorriendo
                     NodoAdyacenteEtiquetado adyacente = nodoActual.getAdyacente();
                     while (adyacente != null) {
-
                         contadorKm+= adyacente.getEtiqueta();
                         if (visitados.get(adyacente.getVertice().getElemento().toString()) == null) {
-                            arreglo = this.caminoConTopeDeKm(adyacente.getVertice(), destino, n, contadorKm,
-                                    visitados, recorridoActual, caminoRes, arreglo);
+                            arreglo=this.caminoConTopeDeKm(adyacente.getVertice(), destino, n, contadorKm,
+                            visitados, recorridoActual, arreglo);
                         }
                         contadorKm-= adyacente.getEtiqueta();                  
                         adyacente = adyacente.getSiguienteAdy();
                     }
                 } 
+                visitados.remove(nodoActual.getElemento().toString());
+                recorridoActual.eliminar(recorridoActual.localizar(nodoActual.getElemento()));         
             }
-            visitados.remove(nodoActual.getElemento().toString());
-            recorridoActual.eliminar(recorridoActual.localizar(nodoActual.getElemento()));         
         }
-        System.out.println(recorridoActual.toString());
         return arreglo;
     }
-
 }

@@ -3,11 +3,9 @@ package PropiasTP;
 import DiccionarioAVL.Diccionario;
 import Utiles.TecladoIn;
 import grafos.GrafoEtiquetado;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,20 +23,12 @@ public class prueba {
     private static Diccionario avlTrenes = new Diccionario();
     private static HashMap<String, Object> hashLineas = new HashMap<>();
 
-    private static File txtEstaciones = new File("leeEstaciones.txt");
-    private static File txtLineas = new File("leeLineas.txt");
-    private static File txtMapaRieles = new File("leeMapaRieles.txt");
-    private static File txtTrenes = new File("leeTrenes.txt");
     private static File txtCambios = new File("archivoLOG.txt");
-        private static File txtDatos = new File("Datos.txt");
+    private static File txtDatos = new File("Datos.txt");
 
     public static void main(String[] args) throws FileNotFoundException {
         int i;
         altaDatos();
-        //altaEstaciones();
-        //altaMapa();
-        //altaLineas();
-        //altaTren();
         do {
             i = menuPrincipal();
             switch (i) {
@@ -75,7 +65,6 @@ public class prueba {
         res = TecladoIn.readLineInt();
         return res;
     }
-
     public static void modificarTxt(String cadena) {
         try {
             FileWriter escribirArchivo = new FileWriter(txtCambios);
@@ -85,29 +74,36 @@ public class prueba {
             buffer.close();
         } catch (Exception ex) {
         }
-    }
+    }// REVISAR PORQUE NO ESCRIBE EN EL LOG
+
     //ALTA
     public static void altaDatos() throws FileNotFoundException {
         Scanner sc = new Scanner(txtDatos);
-        String[] datos;// revisar tamano
         while(sc.hasNextLine()){ // mientras exista una siguiente linea
-            datos = sc.nextLine().split(";");
+            String aux= sc.nextLine();
+            modificarTxt(aux);
+            String[] datos = aux.split(";");
+            System.out.println(datos[0]+", "+datos[1]+", "+datos[3]);
+
             switch (datos[0]) {
-                case "E" ->
-                altaEstaciones2(datos);
-                case "R" ->
-                altaMapa2(datos);
-                case "L" ->
-                altaLineas2(datos);
-                case "T" ->
-                altaTren2(datos);
-                default ->
-                System.out.println("se cargaron todos los datos");
+                case "E":
+                altaEstacion(datos);
+                break;
+                case "R":
+                altaMapa(datos);
+                break;
+                case "L":
+                altaLinea(datos);
+                break;
+                case "T":
+                altaTren(datos);
+                break;
+                default :
             }
         }
         sc.close();
     }
-    public static void altaEstaciones2(String[] datos) throws FileNotFoundException {
+    public static void altaEstacion(String[] datos) throws FileNotFoundException {
         String nombre = datos[1];
         String calle = datos[2];
         int numero = Integer.parseInt(datos[3]);
@@ -118,34 +114,8 @@ public class prueba {
         Estacion nuevaEstacion = new Estacion(nombre, calle, numero, ciudad, codPostal, cantVias, cantPlataformas);
         avlEstaciones.insertar(nuevaEstacion, datos[1]);
         grafoMapa.insertarVertice(nuevaEstacion);
-        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]+";"+datos[4]+";"+datos[5]+";"+datos[6]+";"+datos[7]+";"+datos[8]);
-    }
-    public static boolean altaEstaciones() throws FileNotFoundException {
-        Scanner sc = new Scanner(txtEstaciones);
-        String[] datos = new String[7];
-        boolean res = true;
-        while (sc.hasNextLine()) {
-            datos = sc.nextLine().split(";");
-            if (datos.length == 7) {
-                String nombre = datos[0];
-                String calle = datos[1];
-                int numero = Integer.parseInt(datos[2]);
-                String ciudad = datos[3];
-                int codPostal = Integer.parseInt(datos[4]);
-                int cantVias = Integer.parseInt(datos[5]);
-                int cantPlataformas = Integer.parseInt(datos[6]);
-                Estacion nuevaEstacion = new Estacion(nombre, calle, numero, ciudad, codPostal, cantVias, cantPlataformas);
-                avlEstaciones.insertar(nuevaEstacion, datos[0]);
-                grafoMapa.insertarVertice(nuevaEstacion);
-            } else {
-                res = false;
-            }
-        }
-        sc.close();
-        return res;
-    }
-    
-    public static void altaMapa2(String[] datos) throws FileNotFoundException {
+    }   
+    public static void altaMapa(String[] datos) throws FileNotFoundException {
         String nombreEstacion1 = ((String) datos[1]);
         Estacion estacion1 = (Estacion) avlEstaciones.obtenerDato(nombreEstacion1);
         String nombreEstacion2 = ((String) datos[2]);
@@ -154,66 +124,16 @@ public class prueba {
             double km = Double.parseDouble((String) datos[3]);
             grafoMapa.insertarArco(estacion1, estacion2, km);
         }
-        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]);
-    }
-    public static boolean altaMapa() throws FileNotFoundException {
-//        Scanner sc = cargaArchivo("D:\\Users\\CalamarCoder\\Documents\\NetBeansProjects\\prueba\\src\\main\\java\\Datos\\\\leeTrenes.txt");
-        Scanner sc = new Scanner(txtMapaRieles);
-        String[] datos = new String[3];
-        boolean res = true;
-        while (sc.hasNextLine()) {
-            datos = sc.nextLine().split(";"); //separa los datos por punto y coma
-            if (datos.length == 3) {
-                String nombreEstacion1 = ((String) datos[0]);
-                Estacion estacion1 = (Estacion) avlEstaciones.obtenerDato(nombreEstacion1);
-
-                String nombreEstacion2 = ((String) datos[1]);
-                Estacion estacion2 = (Estacion) avlEstaciones.obtenerDato(nombreEstacion2);
-
-                if (estacion1 != null && estacion2 != null) {
-                    double km = Double.parseDouble((String) datos[2]);
-                    res = grafoMapa.insertarArco(estacion1, estacion2, km);
-                }
-            } else {
-                res = false;
-            }
-        }
-        sc.close();
-        return res;
-    }
-    
-    public static void altaTren2(String[] datos) throws FileNotFoundException {
+    }    
+    public static void altaTren(String[] datos) throws FileNotFoundException {
         int codigo = Integer.parseInt(datos[1]);
         String tipoPropulsion = datos[2];
         int cantidadVagonesPasajeros = Integer.parseInt(datos[3]);
-        int cantidadVagonesCarga = Integer.parseInt(datos[4]);
-        String lineAsignada = datos[4];
+        int cantidadVagonesCarga = Integer.parseInt(datos[4]);;
+        String lineAsignada = datos[5];
         avlTrenes.insertar(new Tren(codigo, tipoPropulsion, cantidadVagonesPasajeros, cantidadVagonesCarga, lineAsignada), datos[1]);
-        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]+";"+datos[4]);
-    }
-    public static boolean altaTren() throws FileNotFoundException {
-//        Scanner sc = cargaArchivo("D:\\Users\\CalamarCoder\\Documents\\NetBeansProjects\\prueba\\src\\main\\java\\Datos\\\\leeTrenes.txt");
-        Scanner sc = new Scanner(txtTrenes);
-        String[] datos = new String[5];
-        boolean res = true;
-        while (sc.hasNextLine()) {
-            datos = sc.nextLine().split(";");
-            if (datos.length == 5) {
-                int codigo = Integer.parseInt(datos[0]);
-                String tipoPropulsion = datos[1];
-                int cantidadVagonesPasajeros = Integer.parseInt(datos[2]);
-                int cantidadVagonesCarga = Integer.parseInt(datos[3]);
-                String lineAsignada = datos[4];
-                avlTrenes.insertar(new Tren(codigo, tipoPropulsion, cantidadVagonesPasajeros, cantidadVagonesCarga, lineAsignada), datos[0]);
-            } else {
-                res = false;
-            }
-        }
-        sc.close();
-        return res;
-    }
-    
-    public static void altaLineas2(String[] datos) throws FileNotFoundException {
+    }  
+    public static void altaLinea(String[] datos) throws FileNotFoundException {
         String nombre = datos[1];
         int i = 2;
         Estacion aux;
@@ -226,34 +146,6 @@ public class prueba {
             i++;
         }
         hashLineas.put(nombre, new Linea(nombre, listaEstaciones));
-        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]+";"+datos[4]+";"+datos[5]+";"+datos[6]+";"+datos[7]+";"+datos[8]);
-    }
-    public static boolean altaLineas() throws FileNotFoundException {
-        Scanner sc = new Scanner(txtLineas);
-        String[] datos = new String[10];
-        boolean res = true;
-        int i;
-        while (sc.hasNextLine()) {// salto de linea
-            datos = sc.nextLine().split(";");
-            if (datos.length != 0) {
-                String nombre = datos[0];
-                i = 1;
-                Estacion aux;
-                Lista listaEstaciones = new Lista();
-                while (i < datos.length) {
-                    aux = (Estacion) avlEstaciones.obtenerDato(datos[i]);
-                    if(aux!=null){
-                        listaEstaciones.insertar(aux, i);
-                    }
-                    i++;
-                }
-                hashLineas.put(nombre, new Linea(nombre, listaEstaciones));
-            } else {
-                res = false;
-            }
-        }
-        sc.close();
-        return res;
     }
     //AMB Esaciones
     private static void ABMEstaciones() {
@@ -726,16 +618,13 @@ public class prueba {
         } while (res != 3);
     }
     public static void mostrarInfoTrenes() {
-        //int cod;
         Tren trenAux;
         do {
             System.out.println("Ingrese Codigo del Tren (si el codigo no existe o es incorrecto se le pedira que lo ingrese nuevamente)");
-            //cod = TecladoIn.readLineInt();
-            //trenAux = (Tren) avlTrenes.obtenerDato(cod);
-            trenAux = (Tren) avlTrenes.obtenerDato(TecladoIn.readLineInt());
+            trenAux = (Tren) avlTrenes.obtenerDato(TecladoIn.readLine());
         } while (trenAux == null);
         System.out.println(trenAux.toString());
-    }
+    }//check
     public static void verificarTrenLinea() {
         int cod;
         Tren trenAux;

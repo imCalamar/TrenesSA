@@ -30,13 +30,15 @@ public class prueba {
     private static File txtMapaRieles = new File("leeMapaRieles.txt");
     private static File txtTrenes = new File("leeTrenes.txt");
     private static File txtCambios = new File("archivoLOG.txt");
+        private static File txtDatos = new File("Datos.txt");
 
     public static void main(String[] args) throws FileNotFoundException {
         int i;
-        altaEstaciones();
-        altaMapa();
-        altaLineas();
-        altaTren();
+        altaDatos();
+        //altaEstaciones();
+        //altaMapa();
+        //altaLineas();
+        //altaTren();
         do {
             i = menuPrincipal();
             switch (i) {
@@ -74,9 +76,9 @@ public class prueba {
         return res;
     }
 
-    public static void modificarTxt(File archivo, String cadena) {
+    public static void modificarTxt(String cadena) {
         try {
-            FileWriter escribirArchivo = new FileWriter(archivo, true);
+            FileWriter escribirArchivo = new FileWriter(txtCambios);
             BufferedWriter buffer = new BufferedWriter(escribirArchivo);
             buffer.write(cadena);
             buffer.newLine();
@@ -84,7 +86,40 @@ public class prueba {
         } catch (Exception ex) {
         }
     }
-
+    //ALTA
+    public static void altaDatos() throws FileNotFoundException {
+        Scanner sc = new Scanner(txtDatos);
+        String[] datos;// revisar tamano
+        while(sc.hasNextLine()){ // mientras exista una siguiente linea
+            datos = sc.nextLine().split(";");
+            switch (datos[0]) {
+                case "E" ->
+                altaEstaciones2(datos);
+                case "R" ->
+                altaMapa2(datos);
+                case "L" ->
+                altaLineas2(datos);
+                case "T" ->
+                altaTren2(datos);
+                default ->
+                System.out.println("se cargaron todos los datos");
+            }
+        }
+        sc.close();
+    }
+    public static void altaEstaciones2(String[] datos) throws FileNotFoundException {
+        String nombre = datos[1];
+        String calle = datos[2];
+        int numero = Integer.parseInt(datos[3]);
+        String ciudad = datos[4];
+        int codPostal = Integer.parseInt(datos[5]);
+        int cantVias = Integer.parseInt(datos[6]);
+        int cantPlataformas = Integer.parseInt(datos[7]);
+        Estacion nuevaEstacion = new Estacion(nombre, calle, numero, ciudad, codPostal, cantVias, cantPlataformas);
+        avlEstaciones.insertar(nuevaEstacion, datos[1]);
+        grafoMapa.insertarVertice(nuevaEstacion);
+        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]+";"+datos[4]+";"+datos[5]+";"+datos[6]+";"+datos[7]+";"+datos[8]);
+    }
     public static boolean altaEstaciones() throws FileNotFoundException {
         Scanner sc = new Scanner(txtEstaciones);
         String[] datos = new String[7];
@@ -109,7 +144,18 @@ public class prueba {
         sc.close();
         return res;
     }
-
+    
+    public static void altaMapa2(String[] datos) throws FileNotFoundException {
+        String nombreEstacion1 = ((String) datos[1]);
+        Estacion estacion1 = (Estacion) avlEstaciones.obtenerDato(nombreEstacion1);
+        String nombreEstacion2 = ((String) datos[2]);
+        Estacion estacion2 = (Estacion) avlEstaciones.obtenerDato(nombreEstacion2);
+        if (estacion1 != null && estacion2 != null) {
+            double km = Double.parseDouble((String) datos[3]);
+            grafoMapa.insertarArco(estacion1, estacion2, km);
+        }
+        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]);
+    }
     public static boolean altaMapa() throws FileNotFoundException {
 //        Scanner sc = cargaArchivo("D:\\Users\\CalamarCoder\\Documents\\NetBeansProjects\\prueba\\src\\main\\java\\Datos\\\\leeTrenes.txt");
         Scanner sc = new Scanner(txtMapaRieles);
@@ -135,7 +181,16 @@ public class prueba {
         sc.close();
         return res;
     }
-
+    
+    public static void altaTren2(String[] datos) throws FileNotFoundException {
+        int codigo = Integer.parseInt(datos[1]);
+        String tipoPropulsion = datos[2];
+        int cantidadVagonesPasajeros = Integer.parseInt(datos[3]);
+        int cantidadVagonesCarga = Integer.parseInt(datos[4]);
+        String lineAsignada = datos[4];
+        avlTrenes.insertar(new Tren(codigo, tipoPropulsion, cantidadVagonesPasajeros, cantidadVagonesCarga, lineAsignada), datos[1]);
+        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]+";"+datos[4]);
+    }
     public static boolean altaTren() throws FileNotFoundException {
 //        Scanner sc = cargaArchivo("D:\\Users\\CalamarCoder\\Documents\\NetBeansProjects\\prueba\\src\\main\\java\\Datos\\\\leeTrenes.txt");
         Scanner sc = new Scanner(txtTrenes);
@@ -157,14 +212,28 @@ public class prueba {
         sc.close();
         return res;
     }
-
+    
+    public static void altaLineas2(String[] datos) throws FileNotFoundException {
+        String nombre = datos[1];
+        int i = 2;
+        Estacion aux;
+        Lista listaEstaciones = new Lista();
+        while (i < datos.length) {
+            aux = (Estacion) avlEstaciones.obtenerDato(datos[i]);
+            if(aux!=null){
+                listaEstaciones.insertar(aux, i);
+            }
+            i++;
+        }
+        hashLineas.put(nombre, new Linea(nombre, listaEstaciones));
+        modificarTxt(datos[0]+";"+datos[1]+";"+datos[2]+";"+datos[3]+";"+datos[4]+";"+datos[5]+";"+datos[6]+";"+datos[7]+";"+datos[8]);
+    }
     public static boolean altaLineas() throws FileNotFoundException {
-//        Scanner sc = cargaArchivo("D:\\Users\\CalamarCoder\\Documents\\NetBeansProjects\\prueba\\src\\main\\java\\Datos\\\\leeTrenes.txt");
         Scanner sc = new Scanner(txtLineas);
         String[] datos = new String[10];
         boolean res = true;
         int i;
-        while (sc.hasNextLine()) {
+        while (sc.hasNextLine()) {// salto de linea
             datos = sc.nextLine().split(";");
             if (datos.length != 0) {
                 String nombre = datos[0];
@@ -186,7 +255,7 @@ public class prueba {
         sc.close();
         return res;
     }
-
+    //AMB Esaciones
     private static void ABMEstaciones() {
         int res;
         do {
@@ -212,7 +281,6 @@ public class prueba {
             }
         } while (res != 4);
     }
-
     public static void altaNuevaEstacion() {
         Estacion nuevaEst;
         String nombre;
@@ -242,7 +310,6 @@ public class prueba {
             System.out.println("Ya existe esa Estacion");
         }
     }
-
     public static void bajaEstacion() {
         Estacion estacion;
         String nombre;
@@ -268,7 +335,6 @@ public class prueba {
             }
         }
     }// hay qye probar
-
     private static void modificarEstacion() {
         int i;
         System.out.println("Ingrese nombre de Estacion a modificar");
@@ -355,7 +421,6 @@ public class prueba {
             }
         } while (res != 4);
     }
-
     public static void altaNuevoTren() {
         Tren nuevoTren;
         int codigo;
@@ -384,7 +449,6 @@ public class prueba {
         avlTrenes.insertar(nuevoTren, codigo);// se inserta el tren en el AVL
         System.out.println("nuevo Tren ingresado");
     }
-
     public static void bajaTren() {
         Tren trenAux;
         int codigo;
@@ -396,7 +460,6 @@ public class prueba {
         avlTrenes.eliminar(codigo);// elimina el tren
         System.out.println("El tren fue eliminado");
     }
-
     private static void modificarTren() {
         int i;
         System.out.println("Ingrese codigo del tren a modificar");
@@ -452,7 +515,7 @@ public class prueba {
             System.out.println("Tren no existe");
         }
     }
-
+    //ABMRieles
     private static void ABMRieles() {
         /**
          * AMB que trabaja sobre el grafo
@@ -467,14 +530,13 @@ public class prueba {
                            3- Modificar Riel  
                            4- Terminar""");
             res = TecladoIn.readLineInt();
-
             switch (res) {
                 case 1 ->
                     altaNuevoRiel();
                 case 2 ->
                     bajaRiel();
-//                case 3 ->
-//                    modificarTren();
+                case 3 ->
+                    modificarRiel();
                 case 4 ->
                     System.out.println("Fin ABM rieles");
                 default ->
@@ -482,52 +544,53 @@ public class prueba {
             }
         } while (res != 4);
     }
-
     public static void altaNuevoRiel() {
         Estacion aux1, aux2;
-        //String nomb1, nomb2;
         do {
             System.out.println("Ingrese nombre de la primera Estacion (si no existe se le pedira que ingrese otro nombre nuevamente)");
-            //nomb1 = TecladoIn.readLine();
-            //aux1 = (Estacion) avlEstaciones.obtenerDato(nomb1);
             aux1=(Estacion) grafoMapa.recuperarVertice(TecladoIn.readLine());
         } while (aux1 == null); //repite hasta encontrar la estacion
-//        NodoVerticeEtiquetado a= grafoMapa.recuperarVertice(aux2);
         do {
             System.out.println("Ingrese nombre de la segunda Estacion (si no existe se le pedira que ingrese otro nombre nuevamente)");
-            //nomb2 = TecladoIn.readLine();
-            //aux2 = (Estacion) avlEstaciones.obtenerDato(nomb2);
-            //aux2 = (Estacion) avlEstaciones.obtenerDato(TecladoIn.readLine());
             aux2=(Estacion) grafoMapa.recuperarVertice(TecladoIn.readLine());
         } while (aux2 == null); //repite hasta encontrar la estacion
-        // se encontraron las dos estaciones
         System.out.println("Ingrese los Km del nuevo Riel");
         double riel = TecladoIn.readLineDouble();
         grafoMapa.insertarArco(aux1, aux2, riel);
         System.out.println("nuevo riel ingresado");
     }
-
     public static void bajaRiel() {
         Estacion aux1, aux2;
-        //String nomb1, nomb2;
         do {
             System.out.println("Ingrese nombre de la primera Estacion (si no existe se le pedira que ingrese otro nombre nuevamente)");
-            //nomb1 = TecladoIn.readLine();
-            //aux1 = (Estacion) avlEstaciones.obtenerDato(nomb1);
             aux1=(Estacion) grafoMapa.recuperarVertice(TecladoIn.readLine());
         } while (aux1 == null);
-//        NodoVerticeEtiquetado a= grafoMapa.recuperarVertice(aux2);
         do {
             System.out.println("Ingrese nombre de la segunda Estacion (si no existe se le pedira que ingrese otro nombre nuevamente)");
-            //nomb2 = TecladoIn.readLine();
-            //aux2 = (Estacion) avlEstaciones.obtenerDato(nomb2);
             aux2=(Estacion) grafoMapa.recuperarVertice(TecladoIn.readLine());
         } while (aux2 == null);
         // se encontraron las dos estaciones
         grafoMapa.eliminarArco(aux1, aux2);
         System.out.println("El riel fue eliminado");
     }
-
+    public static void modificarRiel() {
+        Estacion aux1, aux2;
+        do {
+            System.out.println("Ingrese nombre de la primera Estacion (si no existe se le pedira que ingrese otro nombre nuevamente)");
+            aux1=(Estacion) grafoMapa.recuperarVertice(TecladoIn.readLine());
+        } while (aux1 == null);
+        do {
+            System.out.println("Ingrese nombre de la segunda Estacion (si no existe se le pedira que ingrese otro nombre nuevamente)");
+            aux2=(Estacion) grafoMapa.recuperarVertice(TecladoIn.readLine());
+        } while (aux2 == null);
+        // se encontraron las dos estaciones
+        grafoMapa.eliminarArco(aux1, aux2);
+        System.out.println("ingrese el nuevo valor km del Riel");
+        double riel = TecladoIn.readLineDouble();
+        grafoMapa.insertarArco(aux1, aux2, riel);
+        System.out.println("El riel fue modificado");
+    }
+    //ABM Lineas
     private static void ABMLineas() {
         int res;
         do {
@@ -538,14 +601,13 @@ public class prueba {
                            3- Modificar Linea  
                            4- Terminar""");
             res = TecladoIn.readLineInt();
-
             switch (res) {
                 case 1 ->
                     altaNuevaLinea();
                     case 2 ->
                     bajaLinea();
 //                case 3 ->
-//                    modificarTren();
+//                    modificarLinea();
                 case 4 ->
                     System.out.println("Fin ABM Lineas");
                 default ->
@@ -553,7 +615,6 @@ public class prueba {
             }
         } while (res != 4);
     }
-
     public static void altaNuevaLinea() {
         String nombre, aux;
         boolean seguir=true, existe=false;;
@@ -586,7 +647,6 @@ public class prueba {
         }while(seguir && listaEstaciones.longitud() < 2);
         hashLineas.put(nombre, new Linea(nombre, listaEstaciones)); // crea y guarda la nueva linea en el hash
     }
-
     public static void bajaLinea(){
         String nombre;
         boolean seguir=true;
@@ -596,18 +656,54 @@ public class prueba {
             if(hashLineas.get(nombre)!=null){
                 hashLineas.remove(nombre); // elimina la linea del hash
                 seguir=false;
-                modificarTxt(txtCambios, "La linea "+ nombre+" fue eliminada");
+                modificarTxt("La linea "+ nombre+" fue eliminada");
                 System.out.println("La Linea fue eliminada");
             }else{
                 System.out.println(("La Linea no existe, ingrese otro nombre"));
             }
         }while(seguir);
     }
-
-    public static void modificarLinea(){
-        //mañana es muy largo
+    public static void modificarLinea(){//testear
+        String nombre;
+        boolean seguir=true, valido=false;
+        Estacion aux1,aux2;
+        int i=0;
+            System.out.println("Ingrese nombre de la Linea a modificar");
+            nombre=TecladoIn.readLine();
+            if(hashLineas.containsKey(nombre)){
+            do{
+                System.out.println("ingrese el nuevo recorrido de la linea, Ejem: Mitre;Retiro;Campana;Zárate;Baradero");
+                //String nuevaRecorrido=TecladoIn.readLine();
+                Lista listaEstaciones = new Lista();
+                String[] arregloDeEstaciones = (TecladoIn.readLine()).split(";");
+                //guarda el    
+                aux1 = (Estacion)avlEstaciones.obtenerDato(nombre);
+                if(aux1!=null){
+                    listaEstaciones.insertar(aux1, i);
+                    i++;
+                    do{
+                            aux2 = (Estacion)avlEstaciones.obtenerDato(nombre);
+                            if(aux2!=null){
+                                if(grafoMapa.existeCamino(aux1.getNombre(),aux2.getNombre())==true){
+                                    listaEstaciones.insertar(aux2, i);
+                                    i++;
+                                    aux1=aux2;
+                                }
+                            }else{
+                                seguir=false;
+                            }
+                        }while(arregloDeEstaciones[i]!= null && seguir);
+                    }
+                    if(seguir==true){
+                        hashLineas.put(nombre, new Linea(nombre, listaEstaciones));// actualizo el nuevo recorrido de la linea
+                        valido=true;
+                    }else{
+                        System.out.println("el recorrido no es valido, ingrese otro por favor");
+                }
+            }while(valido==false);
+        }
     }
-
+    //SUBMENU Trenes
     private static void SubMenuTrenes() {
         int res;
         do {
@@ -629,7 +725,6 @@ public class prueba {
             }
         } while (res != 3);
     }
-
     public static void mostrarInfoTrenes() {
         //int cod;
         Tren trenAux;
@@ -641,7 +736,6 @@ public class prueba {
         } while (trenAux == null);
         System.out.println(trenAux.toString());
     }
-
     public static void verificarTrenLinea() {
         int cod;
         Tren trenAux;
@@ -660,7 +754,7 @@ public class prueba {
             System.out.println("el tren no tiene una linea asignada");
         }
     }
-
+    //SUBMENU Viajes
     private static void SubMenuViajes() {
         int res;
         do {
@@ -668,9 +762,9 @@ public class prueba {
                            Sub Menu de opciones de Viajes :  
                            1- Obtener el camino que llegue de A a B que pase por menos estaciones 
                            2- Obtener el camino que llegue de A a B de menor distancia en kilómetros
-                           4- Obtener todos los caminos posibles para llegar de A a B sin pasar por una estación C dada
-                           5- Verificar si es posible llegar de A a B recorriendo como máximo una cantidad X de kilómetros
-                           6- Terminar""");
+                           3- Obtener todos los caminos posibles para llegar de A a B sin pasar por una estación C dada
+                           4- Verificar si es posible llegar de A a B recorriendo como máximo una cantidad X de kilómetros
+                           5- Terminar""");
             res = TecladoIn.readLineInt();
             switch (res) {
                 case 1 ->
@@ -684,19 +778,26 @@ public class prueba {
                 case 5 ->
                     System.out.println("Fin sub menu viajes");
                 default ->
-                    System.out.println("Ingrese una opcion del 1 al 3");
+                    System.out.println("Ingrese una opcion del 1 al 5");
             }
         } while (res != 3);
     }
-
-    private static Object existeCaminoConMaximoKm() {
+    private static void existeCaminoConMaximoKm() {
+        double x=0;
         Estacion est1, est2;
         Estacion[] estaciones=encontrarEstacionesAyB();
         est1=estaciones[0];
         est2=estaciones[1];
-
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existeCaminoConMaximoKm'");
+        do {
+            System.out.println("Ingrese un valor mayor a 0");
+            x = TecladoIn.readLineDouble();
+        } while (x>0);
+        boolean res = grafoMapa.caminoConTopeDeKm(est1, est2, x);
+        if(res==true){
+            System.out.println("Existe un camino entre "+est1.getNombre()+" y "+est2.getNombre()+" menor a la distancia: "+x);
+        }else{
+            System.out.println("NO existe un camino entre "+est1.getNombre()+" y "+est2.getNombre()+" menor a la distancia: "+x);
+        }
     }
     public static void caminoDeAaBMenosEstaciones() {
         Estacion est1, est2;
@@ -707,7 +808,6 @@ public class prueba {
         System.out.println("el camino mas corto entre " + est1.getNombre() + "y " + est2.getNombre() + " es: ");
         System.out.println(aux.toString());
     }
-
     public static void caminoDeAaBMenosKm() {
         Estacion est1, est2;
         Estacion[] estaciones=encontrarEstacionesAyB();
@@ -717,7 +817,6 @@ public class prueba {
         System.out.println("el camino mas corto entre " + est1.getNombre() + "y " + est2.getNombre() + " es: ");
         System.out.println(aux.toString());
     }
-
     public static void posiblesCaminosDeAaBsinPasarPorUnaEstacionC() {
         String nom3;
         Estacion est1, est2, est3;
@@ -734,7 +833,6 @@ public class prueba {
         System.out.println("la lista de caminos entre " + est1.getNombre() + "y " + est2.getNombre() + " sin pasar por " + est2.getNombre() + "  es: ");
         System.out.println(aux.toString());
     }
-
     private static Estacion[] encontrarEstacionesAyB(){
         Estacion[] estaciones =new Estacion[2];
         String nom1, nom2;
@@ -758,5 +856,5 @@ public class prueba {
         } while (est2 == null);
         estaciones[1]=est2;
         return estaciones;
-    }
+    }//check
 }

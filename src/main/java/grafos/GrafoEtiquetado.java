@@ -2,7 +2,7 @@ package grafos;
 
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 import lineales.dinamicas.Cola;
 import lineales.dinamicas.Lista;

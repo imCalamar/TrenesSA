@@ -1,5 +1,8 @@
 package  lineales.dinamicas;
-
+/**
+ *
+ * @author JoaquinNoillet
+ */
 public class Lista {
 
     private int longitud;

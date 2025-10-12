@@ -1,3 +1,0 @@
-Retiro;Córdoba;80
-Córdoba;Mar del Plata;40
-Retiro;Mar del Plata;200

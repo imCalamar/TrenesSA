@@ -4,7 +4,7 @@ import lineales.dinamicas.Lista;
 
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 public class Diccionario {
 

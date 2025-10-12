@@ -10,11 +10,9 @@
  */
 package DiccionarioAVL;
 
-
-
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 public class NodoDiccionario {
 

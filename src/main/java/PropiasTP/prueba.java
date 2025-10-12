@@ -23,8 +23,8 @@ public class prueba {
     private static Diccionario avlTrenes = new Diccionario();
     private static HashMap<String, Object> hashLineas = new HashMap<>();
 
-    private static File txtCambios = new File("archivoLOG.txt");
-    private static File txtDatos = new File("Datos.txt");
+    private static File txtCambios = new File("src/main/java/Datos/archivoLOG.txt");
+    private static File txtDatos = new File("src/main/java/Datos/Datos.txt");
 
     public static void main(String[] args) throws FileNotFoundException {
         int i;

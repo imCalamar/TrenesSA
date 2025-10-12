@@ -1,7 +1,7 @@
 package grafos;
 /**
  *
- * @author CalamarCoder
+ * @author JoaquinNoillet
  */
 public class NodoVerticeEtiquetado {
 

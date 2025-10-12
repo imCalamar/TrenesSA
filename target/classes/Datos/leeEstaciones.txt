@@ -1,4 +1,0 @@
-Retiro; Av. Dr. José María Ramos Mejía;1430;CABA;1104;9;6
-Córdoba;Boulevard Juan Domingo Perón;101;Córdoba;5000;6;4
-Mar del Plata;San Juan;1642;Mar del Plata;7600;5;4
-

@@ -88,7 +88,13 @@ public class Estacion implements Comparable {
     }
     @Override
     public String toString(){
-        return "\n nombre: "+this.nombre+", numero: "+this.numero+"\n";
+        return "\n nombre: "+this.nombre+
+        " ,calle :"+this.calle+
+        " ,numero: "+this.numero+
+        " ,ciudad: "+this.ciudad+
+        " ,codPostal: "+this.codPostal+
+        " ,cantVias: "+this.cantVias+
+        " ,cantPlataformas: "+this.cantPlataformas+"\n";
     }
     public int compareTo(Object o) {
         Estacion c=(Estacion)o;

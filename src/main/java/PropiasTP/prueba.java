@@ -67,14 +67,15 @@ public class prueba {
     }
     public static void modificarTxt(String cadena) {
         try {
-            FileWriter escribirArchivo = new FileWriter(txtCambios);
+            FileWriter escribirArchivo = new FileWriter(txtCambios,true);
             BufferedWriter buffer = new BufferedWriter(escribirArchivo);
             buffer.write(cadena);
             buffer.newLine();
             buffer.close();
         } catch (Exception ex) {
+            ex.printStackTrace();
         }
-    }// REVISAR PORQUE NO ESCRIBE EN EL LOG
+    }//check
 
     //ALTA
     public static void altaDatos() throws FileNotFoundException {
@@ -175,7 +176,7 @@ public class prueba {
     }
     public static void altaNuevaEstacion() {
         Estacion nuevaEst;
-        String nombre;
+        String nombre, text;
         do {
             System.out.println("Ingrese nombre estacion");
             nombre = TecladoIn.readLine();
@@ -197,7 +198,10 @@ public class prueba {
 
         if (avlEstaciones.insertar(nuevaEst, nombre)) {
             grafoMapa.insertarVertice(nuevaEst);
-            System.out.println("nueva Estacion ingresada");
+            text="nueva Estacion ingresada";
+            System.out.println(text);
+            modificarTxt(text);
+            modificarTxt(nuevaEst.toString());
         } else {
             System.out.println("Ya existe esa Estacion");
         }
